@@ -5,5 +5,5 @@
     $obMysql = new mysql();
     /* $obMysql->exceStrQueryOB($obMysql->tabla); */
     /* $obMysql->exceStrQueryPDO($obMysql->strInsert); */
-    $obMysql ->insertOB();
+    $obMysql ->insertPro();
 ?>

@@ -152,7 +152,7 @@
                     $dataJson = json_decode($json, true);
                     if($this->conPro()){
                         $pQuery = mysqli_stmt_init($this->conBD);
-                        mysqli_prepare($pQuery,$this->strInsert);
+                        mysqli_stmt_prepare($pQuery,$this->strInsert);
                         foreach ($dataJson as $id => $value) {
                             mysqli_stmt_bind_param(
                                 $pQuery,
@@ -165,7 +165,7 @@
                                 $value['fecha_alta']
                             );
                             mysqli_stmt_execute($pQuery);
-                            $ultimoid = mysqli_insert_id($pQuery);
+                            $ultimoid = mysqli_insert_id($this->conBD);
                         echo 'nombre: ',$value['nombre'],'ultimo id insertado: ', $ultimoid,'\n';
                     }
                     mysqli_close($this->conBD);
@@ -175,7 +175,7 @@
                     $json = file_get_contents('data.json');
                     $dataJson = json_decode($json, true);
                     try {
-                        $strInsert='insert into resumen_productos(nombre,categoria,precio,cantidad_vendidos,en_almacen,fecha_alta) values(:nombre,:categoria,:precio,:cantidad_vendidos,:en_almacen,:fecha_alta)';
+                        $this->strInsert='insert into resumen_productos(nombre,categoria,precio,cantidad_vendidos,en_almacen,fecha_alta) values(:nombre,:categoria,:precio,:cantidad_vendidos,:en_almacen,:fecha_alta)';
                         if($this->conPDO()){
                             $pquery = $this->conBD->prepare($this->strInsert);
                             foreach ($dataJson as $id => $value) {
