@@ -40,6 +40,16 @@
                 order by precio desc
                 limit :limit;
             ';
+            
+            private $strUpdate ='update resumen_productos set nombre = ?, categoria = ? where id_resumen = ?';
+            private $strUpdatePDO ='update resumen_productos set nombre = :nombre, categoria = :categoria where id_resumen = :id_resumen';
+            
+            private $strdeleter = 'delete from resumen_productos where id_resumen = ? ';
+
+            private $strdeleterPDO = 'delete from resumen_productos where id_resumen = :id_resumen';
+
+
+
             public function __construct(){ // constructor de la clase;
                 global $usuario, $pass, $direccion, $dataName;
                 $this->usuario = $usuario;
@@ -292,6 +302,89 @@
                         echo 'conexion fallido error '.$e->getMessage();
                     }
                 }
-    
+                
+                public function Update(){
+                    $id= 1;
+                    $nombre ='cambio de nombre';
+                    $categoria ='nueva categoria';
+                    if($this->conexionBD()){
+                        $pquery = $this->conBD->prepare($this->strUpdate);
+                        $pquery->bind_param('ssi',$nombre,$categoria,$id);
+                        if($pquery->execute()){
+                            echo 'actualizado';
+                        };
+                        if($pquery->close()){
+                            echo 'cerrado';
+                        };
+
+                    }
+                    $this->conBD->close();
+                }
+
+                public function updatePro(){
+                    $id= 1;
+                    $nombre ='cambio nombre pro';
+                    $categoria ='nueva categoria pro';
+                    if($this->conPro()){
+                        $pquery = mysqli_stmt_init($this->conBD);
+                        mysqli_stmt_prepare($pquery,$this->strUpdate);
+                        mysqli_stmt_bind_param($pquery,'ssi',$nombre,$categoria,$id);
+                        mysqli_stmt_execute($pquery);
+                        mysqli_stmt_close($pquery);
+                    }
+                    mysqli_close($this->conBD);
+                }
+
+                public function updatePDO(){
+                    $id = 1;
+                    $nombre = 'nombre PDO';
+                    $categoria = 'categoria PDO';
+                    try {
+                        if($this->conPDO()){
+                            $pquery = $this->conBD->prepare($this->strUpdatePDO);
+                            $pquery->bindValue(':nombre',$nombre, PDO::PARAM_STR);
+                            $pquery->bindValue(':categoria',$categoria, PDO::PARAM_STR);
+                            $pquery->bindValue(':id_resumen',$id, PDO::PARAM_INT);
+                            $pquery->execute();
+                        }
+                    } catch (PDOException $e) {
+                        echo 'consulta error ',$e->getMessage();
+                    }
+                    $this->conBD = null;
+                }
+
+                public function deleterOB($id){
+                    if($this-> conexionBD()){
+                        $pquery = $this->conBD->prepare($this->strdeleter);
+                        $pquery->bind_param('i',$id);
+                        echo $pquery->execute() ? 'eliminado' : 'fallo en la eliminacion';
+                        $pquery->close();
+                    }
+                    $this->conBD->close();
+                }
+                public function deleterPro($id){
+                    if($this->conPro()){
+                        $pquery = mysqli_stmt_init($this->conBD);
+                        mysqli_stmt_prepare($pquery,$this->strdeleter);
+                        mysqli_stmt_bind_param($pquery,'i',$id);
+                        echo mysqli_stmt_execute($pquery) ? 'eliminado' : 'error en la eliminacion';
+                        mysqli_stmt_close($pquery);
+                    }
+                    mysqli_close($this->conBD);
+                }
+
+                public function deleterPDO($id){
+
+                    try {
+                        if($this->conPDO()){
+                            $pquery = $this->conBD->prepare($this->strdeleterPDO);
+                            $pquery->bindValue(':id_resumen',$id, PDO::PARAM_INT);
+                            echo $pquery->execute() ? 'eliminacion exitosa' : 'fallo en la eliminacion';
+                        }
+                        $this->conBD = null;
+                    } catch (PDOException $e) {
+                        echo 'error en la ejecucion', $e->getMessage();
+                    }
+                }
     }
 ?>

@@ -5,5 +5,5 @@
     $obMysql = new mysql();
     /* $obMysql->exceStrQueryOB($obMysql->tabla); */
     /* $obMysql->exceStrQueryPDO($obMysql->strInsert); */
-    $obMysql ->consultasPDO();
+    $obMysql ->deleterOB(2);
 ?>
